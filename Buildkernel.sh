@@ -6,12 +6,12 @@ export ANDROID_VER="14"
 # Kernel Version
 export KERNEL_VER="6.1"
 # Security Patch or lts
-export SEC_PATCH="2025-05"
+export SEC_PATCH="lts"
 # KERNEL_SUFFIX="" meaning just delete dirty suffix
 # or using custom suffix to replace it
-export KERNEL_SUFFIX="ab13410921"
+export KERNEL_SUFFIX=""
 # Kernel build Time
-export BUILD_TIME="2025-06-12 00:12:14 UTC"
+export BUILD_TIME="2025-06-14 10:10:10 UTC"
 
 echo
 echo -e "\e[32mKernel Information\e[0m"
