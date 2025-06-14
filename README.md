@@ -1,4 +1,4 @@
-learn
+自己测试
 ```
 git clone https://github.com/usijj/PixelGKI.git
 ```
