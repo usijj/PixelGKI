@@ -76,7 +76,7 @@ jobs:
       - name: Setup SukiSU-Ultra
         run: |
          cd Buildkernel
-         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-main
+         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-1.5.8
         
       - name: Setup susfs & manual hooks
         run: |
