@@ -78,18 +78,24 @@ jobs:
          cd Buildkernel
          curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-1.5.8
         
-      - name: Setup susfs & manual hooks
+      - name: Setup susfs & manual hooks & lz4+zstd
         run: |
          cd Buildkernel
          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android${{ github.event.inputs.Android_Version }}-${{ github.event.inputs.Kernel_Version }}     
          git clone https://github.com/SukiSU-Ultra/SukiSU_patch.git
+         git clone https://github.com/Xiaomichael/kernel_patches.git
          cp susfs4ksu/kernel_patches/50_add_susfs_in_gki-android${{ github.event.inputs.Android_Version }}-${{ github.event.inputs.Kernel_Version }}.patch ./common/
          cp susfs4ksu/kernel_patches/fs/* ./common/fs/
          cp susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
+         cp kernel_patches/001-lz4.patch ./common/
+         cp kernel_patches/lz4armv8.S ./common/lib
+         cp kernel_patches/002-zstd.patch ./common/
          cd common
          patch -p1 < 50_add_susfs_in_gki-android${{ github.event.inputs.Android_Version }}-${{ github.event.inputs.Kernel_Version }}.patch || true
          cp ../SukiSU_patch/hooks/syscall_hooks.patch ./
          patch -p1 -F 3 < syscall_hooks.patch
+         git apply -p1 < 001-lz4.patch
+         patch -p1 < 002-zstd.patch
            
       - name: Add susfs configuration to kernel
         run: |
