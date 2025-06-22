@@ -70,8 +70,7 @@ jobs:
         run: |
          mkdir Buildkernel
          cd Buildkernel
-         repo init -u https://android.googlesource.com/kernel/manifest -b android-gs-shusky-6.1-android16-beta --depth=1
-         git ls-remote https://android.googlesource.com/kernel/common android-gs-shusky-6.1-android16-beta
+         repo init -u https://android.googlesource.com/kernel/manifest -b common-android${{ github.event.inputs.Android_Version }}-${{ github.event.inputs.Kernel_Version }}-${{ github.event.inputs.Security_Patch }} --depth=1
          repo sync
          
       - name: Setup SukiSU-Ultra
