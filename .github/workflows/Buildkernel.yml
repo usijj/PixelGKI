@@ -71,7 +71,7 @@ jobs:
          mkdir Buildkernel
          cd Buildkernel
          repo init -u https://android.googlesource.com/kernel/manifest -b android-gs-shusky-6.1-android16-beta --depth=1
-         REMOTE_BRANCH=$(git ls-remote https://android.googlesource.com/kernel/common android-gs-shusky-6.1-android16-beta
+         REMOTE_BRANCH=$(git ls-remote https://android.googlesource.com/kernel/common android-gs-shusky-6.1-android16-beta)
          DEFAULT_MANIFEST_PATH=.repo/manifests/default.xml
          sed -i "s/\"android-gs-shusky-6.1-android16-beta\"/\"deprecated\/android-gs-shusky-6.1-android16-beta\"/g" $DEFAULT_MANIFEST_PATH
          repo sync
