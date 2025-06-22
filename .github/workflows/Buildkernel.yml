@@ -70,7 +70,7 @@ jobs:
         run: |
          mkdir Buildkernel
          cd Buildkernel
-         $REPO init --u https://android.googlesource.com/kernel/manifest -b android-gs-shusky-6.1-android16-beta --depth=1
+         $REPO init https://android.googlesource.com/kernel/manifest -b android-gs-shusky-6.1-android16-beta --depth=1
          REMOTE_BRANCH=$(git ls-remote https://android.googlesource.com/kernel/common android-gs-shusky-6.1-android16-beta
          DEFAULT_MANIFEST_PATH=.repo/manifests/default.xml
          if grep -q deprecated <<< $REMOTE_BRANCH; then
