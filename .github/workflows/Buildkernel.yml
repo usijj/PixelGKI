@@ -73,12 +73,9 @@ jobs:
          repo init -u https://android.googlesource.com/kernel/manifest -b android-gs-shusky-6.1-android16-beta --depth=1
          REMOTE_BRANCH=$(git ls-remote https://android.googlesource.com/kernel/common android-gs-shusky-6.1-android16-beta
          DEFAULT_MANIFEST_PATH=.repo/manifests/default.xml
-         if grep -q deprecated <<< $REMOTE_BRANCH; then
-            echo "Found deprecated branch: android-gs-shusky-6.1-android16-beta"
-            sed -i "s/\"android-gs-shusky-6.1-android16-beta\"/\"deprecated\/android-gs-shusky-6.1-android16-beta\"/g" $DEFAULT_MANIFEST_PATH
-         fi
-         $REPO --version
-         $REPO --trace sync -c -j$(nproc --all) --no-tags --fail-fast
+         sed -i "s/\"android-gs-shusky-6.1-android16-beta\"/\"deprecated\/android-gs-shusky-6.1-android16-beta\"/g" $DEFAULT_MANIFEST_PATH
+         repo --version
+         repo --trace sync -c -j$(nproc --all) --no-tags --fail-fast
          
       - name: Setup SukiSU-Ultra
         run: |
