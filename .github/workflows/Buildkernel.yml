@@ -13,15 +13,15 @@ on:
       Security_Patch:
         description: "Security Patch or lts"
         required: true
-        default: '2025-06'
+        default: '2025-05'
       Kernel_Suffix:
         description: "Custom suffix to replace the dirty suffix (Just delete the dirty suffix,fill in [no])"
         required: false
-        default: 'ab13413027'
+        default: 'ab13610921'
       Kernel_Time:
         description: "Build Time"
         required: true
-        default: '2025-06-17 02:03:44 UTC'
+        default: '2025-06-14 00:12:14 UTC'
       Enable_KPM_Feature:
         description: "Enable KPM Feature"
         required: false
