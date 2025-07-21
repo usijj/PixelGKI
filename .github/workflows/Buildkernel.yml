@@ -174,7 +174,7 @@ jobs:
         run: |
          cd Buildkernel/SukiSU_patch/AnyKernel3
          cp /home/runner/work/PixelGKI/PixelGKI/Buildkernel/dist/Image /home/runner/work/PixelGKI/PixelGKI/Buildkernel/SukiSU_patch/AnyKernel3/
-         zip -r "android${{ github.event.inputs.Android_Version }}-${{ github.event.inputs.Kernel_Version }}-${{ github.event.inputs.Security_Patch }}-AnyKernel3.zip" ./*         
+         zip -r "${{ github.event.inputs.Kernel_Version }}-android${{ github.event.inputs.Android_Version }}-AnyKernel3.zip" ./*         
 
       - name: Output AnyKernel3
         run: |
@@ -182,12 +182,12 @@ jobs:
          mkdir patched
          cd patched
          cp /home/runner/work/PixelGKI/PixelGKI/Buildkernel/dist/kernel /home/runner/work/PixelGKI/PixelGKI/Buildkernel/patched/
-         cp /home/runner/work/PixelGKI/PixelGKI/Buildkernel/SukiSU_patch/AnyKernel3/android${{ github.event.inputs.Android_Version }}-${{ github.event.inputs.Kernel_Version }}-${{ github.event.inputs.Security_Patch }}-AnyKernel3.zip /home/runner/work/PixelGKI/PixelGKI/Buildkernel/patched/
+         cp /home/runner/work/PixelGKI/PixelGKI/Buildkernel/SukiSU_patch/AnyKernel3/${{ github.event.inputs.Kernel_Version }}-android${{ github.event.inputs.Android_Version }}-AnyKernel3.zip /home/runner/work/PixelGKI/PixelGKI/Buildkernel/patched/
 
       - name: Upload kernel&AnyKernel3
         uses: actions/upload-artifact@v4
         with:
-          name: kernel&AnyKernel3-android${{ github.event.inputs.Android_Version }}-${{ github.event.inputs.Kernel_Version }}-${{ github.event.inputs.Security_Patch }}
+          name: kernel&AnyKernel3-${{ github.event.inputs.Kernel_Version }}-android${{ github.event.inputs.Android_Version }}
           path: |
             Buildkernel/patched/kernel
             Buildkernel/patched/*.zip
