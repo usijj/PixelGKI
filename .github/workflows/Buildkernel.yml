@@ -17,11 +17,11 @@ on:
       Kernel_Suffix:
         description: "Custom suffix to replace the dirty suffix (Just delete the dirty suffix,fill in [no])"
         required: false
-        default: 'ab13610921'
+        default: 'ab13710921'
       Kernel_Time:
         description: "Build Time"
         required: true
-        default: '2025-06-14 00:12:14 UTC'
+        default: '2025-07-14 00:12:14 UTC'
       Enable_KPM_Feature:
         description: "Enable KPM Feature"
         required: false
