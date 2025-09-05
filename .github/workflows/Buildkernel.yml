@@ -17,7 +17,7 @@ on:
       Kernel_Suffix:
         description: "Custom suffix to replace the dirty suffix (Just delete the dirty suffix,fill in [no])"
         required: false
-        default: 'ab13640921'
+        default: 'ab13641008-4k'
       Kernel_Time:
         description: "Build Time"
         required: true
