@@ -5,23 +5,23 @@ on:
       Android_Version:
         description: "Android Version"
         required: true
-        default: '14'
+        default: '15'
       Kernel_Version:
         description: "Kernel Version"
         required: true
-        default: '6.1'
+        default: '6.6'
       Security_Patch:
         description: "Security Patch or lts"
         required: true
-        default: '2025-05'
+        default: '2025-04'
       Kernel_Suffix:
         description: "Custom suffix to replace the dirty suffix (Just delete the dirty suffix,fill in [no])"
         required: false
-        default: 'ab13740921'
+        default: 'ab13640921'
       Kernel_Time:
         description: "Build Time"
         required: true
-        default: '2025-07-14 00:12:14 UTC'
+        default: '2025-06-13 00:12:14 UTC'
       Enable_KPM_Feature:
         description: "Enable KPM Feature"
         required: false
