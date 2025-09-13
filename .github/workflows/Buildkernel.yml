@@ -32,24 +32,24 @@ on:
 jobs:
   Details:
     runs-on: ubuntu-latest
-    #env:
-      #CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
-      #CCACHE_NOHASHDIR: "true"
-      #CCACHE_HARDLINK: "true"
+    env:
+      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
+      CCACHE_NOHASHDIR: "true"
+      CCACHE_HARDLINK: "true"
 
-    #steps:
-      #- name: Maximize Build Space
-        #uses: AdityaGarg8/remove-unwanted-software@v5
-        #with:
-          #remove-dotnet: 'true'
-          #remove-android: 'true'
-          #remove-haskell: 'true'
-          #remove-codeql: 'true'
-          #remove-docker-images: 'true'
-          #remove-large-packages: 'true'
-          #remove-swapfile: 'true'
-          #remove-cached-tools: 'false'
-          #verbose: 'true'
+    steps:
+      - name: Maximize Build Space
+        uses: AdityaGarg8/remove-unwanted-software@v5
+        with:
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          remove-large-packages: 'true'
+          remove-swapfile: 'true'
+          remove-cached-tools: 'false'
+          verbose: 'true'
 
       - name: Install toolkit
         run: |
