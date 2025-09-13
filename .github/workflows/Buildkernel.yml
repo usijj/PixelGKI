@@ -32,10 +32,10 @@ on:
 jobs:
   Details:
     runs-on: ubuntu-latest
-    env:
-      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
-      CCACHE_NOHASHDIR: "true"
-      CCACHE_HARDLINK: "true"
+    #env:
+      #CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
+      #CCACHE_NOHASHDIR: "true"
+      #CCACHE_HARDLINK: "true"
 
     #steps:
       #- name: Maximize Build Space
