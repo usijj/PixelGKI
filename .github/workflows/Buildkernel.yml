@@ -90,8 +90,8 @@ jobs:
          cp susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
          cd common
          patch -p1 < 50_add_susfs_in_gki-android${{ github.event.inputs.Android_Version }}-${{ github.event.inputs.Kernel_Version }}.patch || true
-         cp ../SukiSU_patch/hooks/syscall_hooks.patch ./
-         patch -p1 -F 3 < syscall_hooks.patch
+         cp ../SukiSU_patch/hooks/scope_min_manual_hooks_v1.5.patch ./
+         patch -p1 -F 3 < scope_min_manual_hooks_v1.5.patch
            
       - name: Add susfs configuration to kernel
         run: |
