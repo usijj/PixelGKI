@@ -76,7 +76,7 @@ jobs:
          repo sync
 
       - name: Fix Less Then 6.6.50 Builds
-        if: inputs.android_version == 'android15' && inputs.kernel_version == '6.6'
+        if: ${{ github.event.inputs.Android_Version }} == 'android15' && ${{ github.event.inputs.Kernel_Version }} == '6.6'
         run: |
           cd Buildkernel/common
           if ! grep -qxF '#include <trace/hooks/fs.h>' ./fs/namespace.c; then
