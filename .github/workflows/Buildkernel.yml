@@ -38,18 +38,18 @@ jobs:
       CCACHE_HARDLINK: "true"
 
     steps:
-      - name: Maximize Build Space
-        uses: AdityaGarg8/remove-unwanted-software@v5
-        with:
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
-          remove-large-packages: 'true'
-          remove-swapfile: 'true'
-          remove-cached-tools: 'false'
-          verbose: 'true'
+      #- name: Maximize Build Space
+        #uses: AdityaGarg8/remove-unwanted-software@v5
+        #with:
+          #remove-dotnet: 'true'
+          #remove-android: 'true'
+          #remove-haskell: 'true'
+          #remove-codeql: 'true'
+          #remove-docker-images: 'true'
+          #remove-large-packages: 'true'
+          #remove-swapfile: 'true'
+          #remove-cached-tools: 'false'
+          #verbose: 'true'
 
       - name: Install toolkit
         run: |
@@ -75,6 +75,14 @@ jobs:
          repo init -u https://android.googlesource.com/kernel/manifest -b common-android${{ github.event.inputs.Android_Version }}-${{ github.event.inputs.Kernel_Version }}-${{ github.event.inputs.Security_Patch }} --depth=1
          repo sync
 
+      - name: Fix Less Then 6.6.50 Builds
+        if: inputs.android_version == 'android15' && inputs.kernel_version == '6.6'
+        run: |
+          cd Buildkernel/common
+          if ! grep -qxF '#include <trace/hooks/fs.h>' ./fs/namespace.c; then
+              sed -i '/#include <trace\/hooks\/blk.h>/a #include <trace\/hooks\/fs.h>' ./fs/namespace.c
+          fi
+          
       - name: Setup SukiSU-Ultra
         run: |
          cd Buildkernel
@@ -98,11 +106,12 @@ jobs:
          cd Buildkernel
          CONFIGS=( 
          "CONFIG_KSU=y"
+         "CONFIG_KSU_KPROBES_HOOK=n"
          "CONFIG_KSU_SUSFS_SUS_SU=n"
          "CONFIG_KSU_MANUAL_HOOK=y"
          "CONFIG_KSU_SUSFS=y"
          "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y"
-         "CONFIG_KSU_SUSFS_SUS_PATH=n"
+         "CONFIG_KSU_SUSFS_SUS_PATH=y"
          "CONFIG_KSU_SUSFS_SUS_MOUNT=y"
          "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y"
          "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y"
@@ -120,6 +129,8 @@ jobs:
          "CONFIG_IP6_NF_MATCH_HL=y"
          "CONFIG_TMPFS_XATTR=y"
          "CONFIG_TMPFS_POSIX_ACL=y"
+         "CONFIG_LTO_CLANG_THIN=y"
+         "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y"
          )
          for CONFIG in "${CONFIGS[@]}"; do
          echo "$CONFIG" >> common/arch/arm64/configs/gki_defconfig
