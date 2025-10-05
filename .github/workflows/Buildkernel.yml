@@ -75,13 +75,13 @@ jobs:
          repo init -u https://android.googlesource.com/kernel/manifest -b common-android${{ github.event.inputs.Android_Version }}-${{ github.event.inputs.Kernel_Version }}-${{ github.event.inputs.Security_Patch }} --depth=1
          repo sync
 
-      - name: Fix Less Then 6.6.50 Builds
-        if: ${{ github.event.inputs.Android_Version }} == 'android15' && ${{ github.event.inputs.Kernel_Version }} == '6.6'
-        run: |
-          cd Buildkernel/common
-          if ! grep -qxF '#include <trace/hooks/fs.h>' ./fs/namespace.c; then
-              sed -i '/#include <trace\/hooks\/blk.h>/a #include <trace\/hooks\/fs.h>' ./fs/namespace.c
-          fi
+      #- name: Fix Less Then 6.6.50 Builds
+        #if: ${{ github.event.inputs.Android_Version }} == 'android15' && ${{ github.event.inputs.Kernel_Version }} == '6.6'
+        #run: |
+          #cd Buildkernel/common
+          #if ! grep -qxF '#include <trace/hooks/fs.h>' ./fs/namespace.c; then
+              #sed -i '/#include <trace\/hooks\/blk.h>/a #include <trace\/hooks\/fs.h>' ./fs/namespace.c
+          #fi
           
       - name: Setup SukiSU-Ultra
         run: |
