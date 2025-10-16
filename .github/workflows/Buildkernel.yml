@@ -5,23 +5,23 @@ on:
       Android_Version:
         description: "Android Version"
         required: true
-        default: '14'
+        default: '15'
       Kernel_Version:
         description: "Kernel Version"
         required: true
-        default: '6.1'
+        default: '6.6'
       Security_Patch:
         description: "Security Patch or lts"
         required: true
-        default: '2025-06'
+        default: '2025-04'
       Kernel_Suffix:
         description: "Custom suffix to replace the dirty suffix (Just delete the dirty suffix,fill in [no])"
         required: false
-        default: 'ab13615898'
+        default: 'ab13641008-4k'
       Kernel_Time:
         description: "Build Time"
         required: true
-        default: '2025-06-17 02:03:44 UTC'
+        default: '2025-06-13 03:20:13 UTC'
       Enable_KPM_Feature:
         description: "Enable KPM Feature"
         required: false
@@ -38,18 +38,18 @@ jobs:
       CCACHE_HARDLINK: "true"
 
     steps:
-      - name: Maximize Build Space
-        uses: AdityaGarg8/remove-unwanted-software@v5
-        with:
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
-          remove-large-packages: 'true'
-          remove-swapfile: 'true'
-          remove-cached-tools: 'false'
-          verbose: 'true'
+      #- name: Maximize Build Space
+        #uses: AdityaGarg8/remove-unwanted-software@v5
+        #with:
+          #remove-dotnet: 'true'
+          #remove-android: 'true'
+          #remove-haskell: 'true'
+          #remove-codeql: 'true'
+          #remove-docker-images: 'true'
+          #remove-large-packages: 'true'
+          #remove-swapfile: 'true'
+          #remove-cached-tools: 'false'
+          #verbose: 'true'
 
       - name: Install toolkit
         run: |
@@ -75,6 +75,14 @@ jobs:
          repo init -u https://android.googlesource.com/kernel/manifest -b common-android${{ github.event.inputs.Android_Version }}-${{ github.event.inputs.Kernel_Version }}-${{ github.event.inputs.Security_Patch }} --depth=1
          repo sync
 
+      #- name: Fix Less Then 6.6.50 Builds
+        #if: ${{ github.event.inputs.Android_Version }} == 'android15' && ${{ github.event.inputs.Kernel_Version }} == '6.6'
+        #run: |
+          #cd Buildkernel/common
+          #if ! grep -qxF '#include <trace/hooks/fs.h>' ./fs/namespace.c; then
+              #sed -i '/#include <trace\/hooks\/blk.h>/a #include <trace\/hooks\/fs.h>' ./fs/namespace.c
+          #fi
+          
       - name: Setup SukiSU-Ultra
         run: |
          cd Buildkernel
@@ -90,35 +98,63 @@ jobs:
          cp susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
          cd common
          patch -p1 < 50_add_susfs_in_gki-android${{ github.event.inputs.Android_Version }}-${{ github.event.inputs.Kernel_Version }}.patch || true
-         cp ../SukiSU_patch/hooks/syscall_hooks.patch ./
-         patch -p1 -F 3 < syscall_hooks.patch
+         cp ../SukiSU_patch/hooks/scope_min_manual_hooks_v1.5.patch ./
+         #cp ../SukiSU_patch/hooks/syscall_hooks.patch ./
+         patch -p1 -F 3 < scope_min_manual_hooks_v1.5.patch
+         #patch -p1 -F 3 < syscall_hooks.patch
            
       - name: Add susfs configuration to kernel
         run: |
          cd Buildkernel
-         CONFIGS=( 
-         "CONFIG_KSU=y"
-         "CONFIG_KSU_SUSFS_SUS_SU=n"
-         "CONFIG_KSU_MANUAL_HOOK=y"
-         "CONFIG_KSU_SUSFS=y"
-         "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y"
-         "CONFIG_KSU_SUSFS_SUS_PATH=y"
-         "CONFIG_KSU_SUSFS_SUS_MOUNT=y"
-         "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y"
-         "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y"
-         "CONFIG_KSU_SUSFS_SUS_KSTAT=y"
-         "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=n"
-         "CONFIG_KSU_SUSFS_TRY_UMOUNT=y"
-         "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y"
-         "CONFIG_KSU_SUSFS_SPOOF_UNAME=y"
-         "CONFIG_KSU_SUSFS_ENABLE_LOG=y"
-         "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y"
-         "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y"
-         "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y"
-         )
-         for CONFIG in "${CONFIGS[@]}"; do
-         echo "$CONFIG" >> common/arch/arm64/configs/gki_defconfig
-         done
+         echo "CONFIG_KSU=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_MANUAL_HOOK=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=n" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_TMPFS_XATTR=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_TMPFS_POSIX_ACL=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_BPF_STREAM_PARSER=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_NETFILTER_XT_SET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_MAX=256" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_BITMAP_IP=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_BITMAP_IPMAC=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_BITMAP_PORT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_IP=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_IPMARK=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_IPPORT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_IPPORTIP=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_IPPORTNET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_IPMAC=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_MAC=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_NETPORTNET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_NET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_NETNET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_NETPORT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_NETIFACE=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_LIST_SET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP6_NF_NAT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP6_NF_TARGET_MASQUERADE=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_ECN=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_TCP_ECN=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IPV6_ECN=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_NF_TARGET_ECN=y" >> common/arch/arm64/configs/gki_defconfig
+         sed -i 's/check_defconfig//' ./common/build.config.gki
          echo -e "\e[33m[Done]\e[0m" Added susfs configuration to kernel
       
       - name: Add KPM configuration to kernel
@@ -131,28 +167,30 @@ jobs:
       - name: Set kernel suffix
         run: |
          cd Buildkernel
-         sudo sed -i 's/check_defconfig//' ./common/build.config.gki
          if [ "${{ github.event.inputs.Kernel_Suffix }}" = "no" ]; then
           sed -i '$i res=$(echo "$res" | sed '\''s/-dirty//g'\'')' common/scripts/setlocalversion
           echo -e "\e[33m[Done]\e[0m" Delete the dirty suffix
          else
-          sed -i '$i res=$(echo "$res" | sed '\''s/-dirty//g'\'')' common/scripts/setlocalversion
-          sed -i '$s|echo "\$res"|echo "\$res-${{ github.event.inputs.Kernel_Suffix }}"|' ./common/scripts/setlocalversion
+          sed -i 's/build-timestamp = $(or $(KBUILD_BUILD_TIMESTAMP), $(build-timestamp-auto))/build-timestamp = "Thu Jul 10 03:15:03 UTC 2025"/' ./common/init/Makefile
+          sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
+          sudo sed -i "s/-4k/-gd4aed7ed470e-ab13759939-4k/g" ./common/arch/arm64/configs/gki_defconfig
           echo -e "\e[33m[Done]\e[0m" Setup custom suffix
          fi
 
-      - name: Set kernel build time
-        run: |
-         export SOURCE_DATE_EPOCH=$(date -d "${{ github.event.inputs.Kernel_Time }}" +%s)
-         echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH" >> $GITHUB_ENV
-         echo -e "\e[33m[Done]\e[0m" Setup kernel build time
+      #- name: Set kernel build time
+      #  run: |
+      #   export SOURCE_DATE_EPOCH=$(date -d "${{ github.event.inputs.Kernel_Time }}" +%s)
+      #   echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH" >> $GITHUB_ENV
+      #   echo -e "\e[33m[Done]\e[0m" Setup kernel build time
 
       - name: Build kernel
         run: |
          cd Buildkernel
          sed -i '/^[[:space:]]*"protected_exports_list"[[:space:]]*:[[:space:]]*"android\/abi_gki_protected_exports_aarch64",$/d' ./common/BUILD.bazel
          rm -rf ./common/android/abi_gki_protected_exports_*
-         tools/bazel run --copt=-O3 --config=fast --config=stamp --lto=thin //common:kernel_aarch64_dist -- --destdir=dist
+         sed -i 's/BUILD_SYSTEM_DLKM=1/BUILD_SYSTEM_DLKM=0/' common/build.config.gki.aarch64
+         sed -i '/MODULES_ORDER=android\/gki_aarch64_modules/d' common/build.config.gki.aarch64
+         tools/bazel run --config=fast --lto=thin //common:kernel_aarch64_dist -- --destdir=dist
 
       - name: KPM patch
         if: ${{inputs.Enable_KPM_Feature }}
